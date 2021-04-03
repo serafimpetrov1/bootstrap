@@ -1,23 +1,24 @@
+# Generating data
 set.seed(2021)
 n <- 1000
 x <- rnorm(n)
 y <- x + rnorm(n)
 
 
-
+#Models of population and sample
 population.data <- as.data.frame(cbind(x, y))
 population.model <- lm(y ~ x, population.data)
 summary(population.model)
 
 
-
+#Sampling the data
 sample.data <-
   population.data[sample(nrow(population.data), 20, replace = TRUE), ]
 sample.model <- lm(y ~ x, data = sample.data)
 summary(sample.model)
 
 
-
+#Plotting the models
 plot(y ~ x, col = "gray", main = 'Population and Sample Regressions')
 abline(coef(population.model)[1], coef(population.model)[2], col = "red")
 abline(coef(sample.model)[1],
@@ -32,7 +33,7 @@ legend(
   cex = 0.8)
 
 
-
+#The bootstrap regression
 sample_coef_intercept <- NULL
 sample_coef_x1 <- NULL
 
@@ -50,6 +51,8 @@ for (i in 1:1000) {
 
 coefs <- rbind(sample_coef_intercept, sample_coef_x1)
 
+
+# Combining the results in a table
 means.boot = c(mean(sample_coef_intercept), mean(sample_coef_x1))
 knitr::kable(round(
   cbind(
@@ -87,7 +90,7 @@ knitr::kable(rbind(
 
 
 
-
+#Predicting on new data
 new.data = seq(min(x), max(x), by = 0.05)
 conf_interval <-
   predict(
@@ -96,6 +99,8 @@ conf_interval <-
     interval = "confidence",
     level = 0.95)
 
+
+#Plotting the results on the project step-by-spet
 plot(
   y ~ x,
   col = "gray",
